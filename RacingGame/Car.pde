@@ -13,6 +13,7 @@ class Car {
 
   float currentSpeed; // TODO: pick better names for these variables
   float carSpeed;
+  float turnSpeed;
 
   //int steering = 1; //(0 = L, 1 = M, 2 = R) // could be used in the future to apply effects / animations depending on where the player is steering
 
@@ -20,9 +21,11 @@ class Car {
 
 
   // TODO: add a constructor that lets you initialize different stats for each car
-  Car() {
+  Car(float acceleration, float steering) {
 
-    carSpeed = 0.45;
+   // carSpeed = 0.45;
+   carSpeed = acceleration;
+   turnSpeed = steering; //3
     direction = 0;
     degrees = 0;
 
@@ -68,7 +71,7 @@ class Car {
 
     // Output the current speed of the object - Useful for speedometers and similar GUI elements
     currentSpeed = velocity.mag();
-    print("Current speed = " + currentSpeed + "\n");
+   // print("Current speed = " + currentSpeed + "\n");
 
     // https://processing.org/reference/resetMatrix_.html
     // This resets the object's identity whenever the object rotates
@@ -99,9 +102,9 @@ class Car {
   void turn(char turnDirection) {
 
     if (turnDirection == 'l') {
-      direction -= 3;
+      direction -= turnSpeed;
     } else if (turnDirection == 'r') {
-      direction += 3;
+      direction += turnSpeed;
     }
   }
 }

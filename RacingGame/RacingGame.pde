@@ -10,7 +10,11 @@
 // The 'star' arrays from AS3 will be heavily upgraded / replaced to create an ambient particle system
 //star[] starsA = new star[40];
 
-Car playerCar;
+ArrayList<Car> cars = new ArrayList<Car>();
+
+Car playerCar, playerCar2, playerCar3;
+
+
 PShape rocket, rocket2, rocket3, tower, car, road;
 
 int test = 255;
@@ -33,10 +37,21 @@ PImage car1, car2, car3, track1, track2, track3, arrow1, arrow2, arrow3, screen1
 int carSelected;
 int trackSelected;
 
+// TIMER STUFF:
+
+float lastTime;
+float timeCount; // how long until the timer updates --> 1000ms = 1 
+float seconds;
+
 //Arcade Cabinet Specs
 // 1280 x 1024 resolution
 
 void setup() {
+  
+  lastTime = millis();
+  timeCount = 1000;
+  seconds = 0;
+  
   println("Loading...\n");
   size(1280, 960, P3D);
   //fullScreen(P3D);
@@ -79,7 +94,7 @@ void setup() {
 
 
   txtr = loadImage("newPalette.png");
- // road = loadShape("Road.obj");
+  // road = loadShape("Road.obj");
   //road.setTexture(txtr); //attach texture to the 3D shape
   //road.rotateX(-1.5);
 
@@ -87,22 +102,35 @@ void setup() {
 
   //road.scale(20);
   //car.scale(10);
- // car.rotateX(1.5);
+  // car.rotateX(1.5);
 
   //car.rotateX(-0.75);
 
-  playerCar = new Car();     //create the player car
+  playerCar = new Car(0.45, 3);     //create the player car
+  playerCar2 = new Car(0.5, 3.5);
+  playerCar3 = new Car(0.4, 2.5);
+
+  cars.add(playerCar);
+  cars.add(playerCar2);
+  cars.add(playerCar3);
+
   //ortho();
   //ortho(-width/2, width/2, -height/2 - (100), height/2 + (100));
   noStroke();
-  
+
   println("All assets loaded!\n");
-  
+
   // TODO: make a load() function instead of putting everything here
-
-
 }
 
+void updateTimer() {
+ 
+  if (millis() > lastTime + timeCount) {
+   lastTime = millis(); 
+   seconds++;
+  }
+  
+}
 
 
 void draw() {
@@ -134,7 +162,7 @@ void draw() {
     } else if (carSelected ==2) {
       image(arrow2, -width/2, -height/2 + 400);
       image(car2, -width/2, -height/2 + 300);
-    } else {
+    } else if (carSelected == cars.size()) {
       image(arrow3, -width/2, -height/2 + 400);
       image(car3, -width/2, -height/2 + 300);
     }
@@ -176,9 +204,25 @@ void draw() {
   if (currentScreen == 5) {
 
     image(img, -width/2, -2800, 3500, 3500); // placeholder 2D track - doesn't match the final artstyle
-    
-      playerCar.show();
-    
+
+    fill(255);
+    textSize(20);
+    text(seconds, cars.get(carSelected - 1).position.x, cars.get(carSelected - 1).position.y + 50);
+    updateTimer();
+
+    cars.get(carSelected - 1).show();
+    print("CarSelected = " + carSelected + "\n");
+
+
+    if (trackSelected == 2) {
+      cars.get(carSelected - 1).position.set(0, 0);
+    }
+
+    print(cars.get(carSelected - 1).position);
+
+    float currentCarSpeed = getCarSpeed(cars.get(carSelected-1));
+    print("Current speed = " + currentCarSpeed + "\n");
+
     if (cF2 >0) {
       cF2 -=0.5;
     }
@@ -189,27 +233,28 @@ void draw() {
 
     camera(easeX, easeY + cF2, ((height/2.0) / tan(PI*30.0 / 180.0)) - cF3, easeX, easeY, 0, 0, 1, 0);
     // should use position.x/y until it gets to the final 2D position -- otherwise it 'snaps' to the position as everything loads
-    
+
     if (pressRight) {
-    playerCar.turn('r');
-    playerCar.moveRight = true;
+      playerCar.turn('r');
+      playerCar.moveRight = true;
+    }
+
+    if (pressUp) {
+      playerCar.moveUp = true;
+    }
+
+    if (pressDown) {
+      playerCar.moveDown = true;
+    }
+
+    if (pressLeft) {
+      playerCar.turn('l');
+      playerCar.moveLeft = true;
+    }
   }
 
-  if (pressUp) {
-    playerCar.moveUp = true;
-  }
 
-  if (pressDown) {
-    playerCar.moveDown = true;
-  }
 
-  if (pressLeft) {
-    playerCar.turn('l');
-    playerCar.moveLeft = true;
-  }
-    
-    
-  }
 
 
   fill(255);
@@ -257,8 +302,10 @@ void draw() {
   //shadow
   //fill(0, 75);
   //rect(playerCar.shipPosition.x, playerCar.shipPosition.y, 45, 30);
+}
 
-
+float getCarSpeed(Car car) {
+  return car.velocity.mag();
 }
 
 

@@ -1,0 +1,42 @@
+31. What’s the difference between an array and an ArrayList?
+- Arrays can only be a predetermined length (which gets decided when the array is declared).
+- ArrayLists have a variable length, so elements can continually be added / removed from them.
+
+
+32. Why would you want to go through a list backwards, decrementing the index?
+- Decrementing can be useful for various reasons. For example, copying the elements of an array into another array (but in reverse order),
+  displaying all of an array's elements from last to first, etc.
+
+
+37. When should you use PVector instead of float variables?
+- PVector should be used whenever you are calculating object positions & anything physics-related (i.e. movement, acceleration, gravity, etc).
+
+
+19. What’s the difference between a for loop and a while loop?
+- A 'for loop' iterates through the loop a set number of times (i.e. i = 0; i < 10)
+- A 'while loop' iterates through the loop while a condition is true, which could change at any time (i.e. while playerPosX > 10)
+
+
+22. What’s the difference between parameters and arguments?
+- Arguments are *passed* to functions, while parameters are *within function definitions*.
+- i.e. "void movePlayer(float x, float y)" has 2 parameters, while "movePlayer(5,6)" has 2 arguments.
+
+
+42. What is a normalized vector, why is it useful?
+- A normalized vector is any vector that is edited so the magnitude doesn't exceed 1.
+- This is useful, because some games apply vertical and horizontal acceleration differently, leading to some players getting an unfair boost if they only move diagonally.
+
+
+25. What’s the difference between a class and an object?
+- A class defines an object, while an object is a single instance.
+
+
+26. What is a constructor function? What does it do and when?
+- A constructor function is used to initialize any object from a class.
+- It gets called when an object is first created / instantiated, and is responsible for assigning values to the object's variables.
+
+
+27. Why should each class have its own tab in Processing?
+- Having each class be a separate tab is good for modularity.
+- As programs get more and more complicated, having multiple classes all within one tab would be difficult to scroll through and organize.
+
