@@ -138,6 +138,7 @@ void draw() {
 
   rectMode(CENTER);
   background(20, 10, 35);
+  background(50, 50, 50);
   noTint();
 
   // SPLASH SCREEN
@@ -205,6 +206,9 @@ void draw() {
 
     image(img, -width/2, -2800, 3500, 3500); // placeholder 2D track - doesn't match the final artstyle
 
+    
+    // TO-DO: create an empty Car object that holds the 'cars.get(carSelected-1)' obj instead of constantly calling that
+    
     fill(255);
     textSize(20);
     text(seconds, cars.get(carSelected - 1).position.x, cars.get(carSelected - 1).position.y + 50);
@@ -235,21 +239,21 @@ void draw() {
     // should use position.x/y until it gets to the final 2D position -- otherwise it 'snaps' to the position as everything loads
 
     if (pressRight) {
-      playerCar.turn('r');
-      playerCar.moveRight = true;
+      cars.get(carSelected-1).turn('r');
+      cars.get(carSelected-1).moveRight = true;
     }
 
     if (pressUp) {
-      playerCar.moveUp = true;
+      cars.get(carSelected-1).moveUp = true;
     }
 
     if (pressDown) {
-      playerCar.moveDown = true;
+      cars.get(carSelected-1).moveDown = true;
     }
 
     if (pressLeft) {
-      playerCar.turn('l');
-      playerCar.moveLeft = true;
+      cars.get(carSelected-1).turn('l');
+      cars.get(carSelected-1).moveLeft = true;
     }
   }
 
@@ -261,11 +265,11 @@ void draw() {
   textSize(20);
   text("FPS: " + frameRate, 545, -450);
 
-  float targetX = playerCar.position.x;
+  float targetX = cars.get(carSelected-1).position.x;
   float dx = targetX - easeX;
   easeX += dx * easing;
 
-  float targetY = playerCar.position.y;
+  float targetY = cars.get(carSelected-1).position.y;
   float dy = targetY - easeY;
   easeY += dy * easing;
 
@@ -375,21 +379,21 @@ void keyReleased() {
 
   if (key == 'd' || key == CODED && keyCode == RIGHT) {
     pressRight = false;
-    playerCar.moveRight = false;
+    cars.get(carSelected-1).moveRight = false;
   }
 
   if (key == 'w' || key == CODED && keyCode == UP || key == 'x') {
     pressUp = false;
-    playerCar.moveUp = false;
+    cars.get(carSelected-1).moveUp = false;
   }
 
   if (key == 'a' || key == CODED && keyCode == LEFT) {
     pressLeft = false;
-    playerCar.moveLeft = false;
+    cars.get(carSelected-1).moveLeft = false;
   }
 
   if (key == 's' || key == CODED && keyCode == DOWN || key == 'z') {
     pressDown = false;
-    playerCar.moveDown = false;
+    cars.get(carSelected-1).moveDown = false;
   }
 }
