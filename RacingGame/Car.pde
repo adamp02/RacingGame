@@ -19,10 +19,14 @@ class Car {
 
   boolean moveLeft, moveRight, moveUp, moveDown;
 
+  PImage imag;
+
 
   // TODO: add a constructor that lets you initialize different stats for each car
   Car(float acceleration, float steering) {
 
+    imag = loadImage("car1.png");
+    
    // carSpeed = 0.45;
    carSpeed = acceleration;
    turnSpeed = steering; //3
@@ -38,6 +42,7 @@ class Car {
     rectMode(CENTER);
     fill(150, 150, 150);
     carShape = createShape(RECT, 0, 0, 40, 20);
+    //carShape.texture(imag);
   }
 
 

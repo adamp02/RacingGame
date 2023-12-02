@@ -1,6 +1,6 @@
 /*
 
- AS5 - Milestone 1
+ AS5 - Milestone 2
  By: Adam Prochazka
  Student ID: 991613655
  
@@ -15,7 +15,7 @@ ArrayList<Car> cars = new ArrayList<Car>();
 Car playerCar, playerCar2, playerCar3;
 
 
-PShape rocket, rocket2, rocket3, tower, car, road;
+PShape rocks, rocket, rocket2, rocket3, tower, car, road;
 
 int test = 255;
 
@@ -43,6 +43,8 @@ float lastTime;
 float timeCount; // how long until the timer updates --> 1000ms = 1 
 float seconds;
 
+Checkpoint cpdemo;
+
 //Arcade Cabinet Specs
 // 1280 x 1024 resolution
 
@@ -50,7 +52,7 @@ void setup() {
   
   lastTime = millis();
   timeCount = 1000;
-  seconds = 0;
+  seconds = 30;
   
   println("Loading...\n");
   size(1280, 960, P3D);
@@ -89,6 +91,7 @@ void setup() {
   frameRate(60);
   tower = loadShape("tower.obj");
   car = loadShape("sedanSports.obj");
+  rocks = loadShape("rockFormationLarge.obj");
   //car = loadShape("r5.obj");
 
 
@@ -121,13 +124,16 @@ void setup() {
   println("All assets loaded!\n");
 
   // TODO: make a load() function instead of putting everything here
+  
+  cpdemo = new Checkpoint(10, 100, 100, 0, 0);
+  
 }
 
 void updateTimer() {
  
   if (millis() > lastTime + timeCount) {
    lastTime = millis(); 
-   seconds++;
+   seconds--;
   }
   
 }
@@ -204,28 +210,57 @@ void draw() {
   // GAMEPLAY
   if (currentScreen == 5) {
 
-    image(img, -width/2, -2800, 3500, 3500); // placeholder 2D track - doesn't match the final artstyle
 
     
+    image(img, -width/2, -2800, 3500, 3500); // placeholder 2D track - doesn't match the final artstyle
+    cpdemo.show();
+    
+     shape(rocks, cpdemo.checkPos.x + 50, cpdemo.checkPos.y + 50);
+  rocks.resetMatrix();
+  rocks.scale(150);
+  rocks.rotateX(1.57);
+  //car.rotate(radians(cars.get(carSelected-1).direction + 90));
+    
+    
+    boolean gotCheck = cpdemo.carCollision(cars.get(carSelected - 1).position);
+    if (gotCheck && cpdemo.enabled) {
+     
+      
+      print("GOT CHECK ");
+      cpdemo.enabled = false;
+      seconds+=cpdemo.checkTime;
+      
+      cars.get(carSelected - 1).velocity.mult(-1); // good collision! // No
+                                                   // have some multiply everything by -1, some only X, some only Y
+      
+    }
+    
+    
     // TO-DO: create an empty Car object that holds the 'cars.get(carSelected-1)' obj instead of constantly calling that
+    // or call function that sends obj ref?
     
     fill(255);
     textSize(20);
-    text(seconds, cars.get(carSelected - 1).position.x, cars.get(carSelected - 1).position.y + 50);
+    text(int(seconds), cars.get(carSelected - 1).position.x, cars.get(carSelected - 1).position.y + 50);
     updateTimer();
+    
+    
+    fill(255);
+  textSize(20);
+  text("FPS: " + frameRate, cars.get(carSelected - 1).position.x - 50, cars.get(carSelected - 1).position.y + 100);
 
     cars.get(carSelected - 1).show();
-    print("CarSelected = " + carSelected + "\n");
+   // print("CarSelected = " + carSelected + "\n");
 
 
     if (trackSelected == 2) {
       cars.get(carSelected - 1).position.set(0, 0);
     }
 
-    print(cars.get(carSelected - 1).position);
+    
 
     float currentCarSpeed = getCarSpeed(cars.get(carSelected-1));
-    print("Current speed = " + currentCarSpeed + "\n");
+    //print("Current speed = " + currentCarSpeed + "\n");
 
     if (cF2 >0) {
       cF2 -=0.5;
@@ -235,7 +270,7 @@ void draw() {
       cF3 -=2;
     }
 
-    camera(easeX, easeY + cF2, ((height/2.0) / tan(PI*30.0 / 180.0)) - cF3, easeX, easeY, 0, 0, 1, 0);
+    camera(easeX, easeY, ((height/2.0) / tan(PI*30.0 / 180.0)) - cF3, easeX, easeY, 0, 0, 1, 0);
     // should use position.x/y until it gets to the final 2D position -- otherwise it 'snaps' to the position as everything loads
 
     if (pressRight) {
@@ -255,15 +290,16 @@ void draw() {
       cars.get(carSelected-1).turn('l');
       cars.get(carSelected-1).moveLeft = true;
     }
+    
+   
+    
   }
 
 
 
 
 
-  fill(255);
-  textSize(20);
-  text("FPS: " + frameRate, 545, -450);
+ 
 
   float targetX = cars.get(carSelected-1).position.x;
   float dx = targetX - easeX;
@@ -290,17 +326,17 @@ void draw() {
   // directionalLight(255, 255, 255, 0, -1, -2);
   // directionalLight(155, 155, 200, 2, 0, 0);
 
-  // shape(car, playerCar.position.x, playerCar.position.y);
+   shape(car, cars.get(carSelected-1).position.x, cars.get(carSelected-1).position.y);
   //car = loadShape("sedanSports.obj"); // this resets it to 0 at all times, but there has to be a better way apart from loading it?
   // vv YES THERE IS :D
-  //car.resetMatrix();
-  //car.scale(15);
-  //car.rotateX(1.57);
-  //car.rotate(radians(playerCar.direction));
+  car.resetMatrix();
+  car.scale(15);
+  car.rotateX(1.57);
+  car.rotate(radians(cars.get(carSelected-1).direction + 90));
 
   // animates the car bumping on uneven ground. rate of bumping is determined by the car's magnitude (faster = more erratic shaking)
-  // car.rotateY(random(-0.05 * (playerCar.currentSpeed * 0.1), 0.05 * (playerCar.currentSpeed * 0.1))); //shaking on gravel
-  // car.rotateX(random(-0.01 * (playerCar.currentSpeed * 0.1), 0.01 * (playerCar.currentSpeed * 0.1)));
+   car.rotateY(random(-0.05 * (cars.get(carSelected-1).currentSpeed * 0.1), 0.05 * (cars.get(carSelected-1).currentSpeed * 0.1))); //shaking on gravel
+   car.rotateX(random(-0.01 * (cars.get(carSelected-1).currentSpeed * 0.1), 0.05 * (cars.get(carSelected-1).currentSpeed * 0.1)));
 
 
   //shadow
